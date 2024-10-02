@@ -42,6 +42,15 @@ code {
   text-align: center;
 }
 
+/* Add margin to space out the title and subtitle */
+h1 {
+  margin-bottom: 20px; /* Space between the title and the next element */
+}
+
+h2 {
+  margin-bottom: 15px; /* Space between the subtitle and the QR code scanner */
+}
+
 /* Buttons */
 button {
   background-color: #4CAF50;
