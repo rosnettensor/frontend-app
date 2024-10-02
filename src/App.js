@@ -62,10 +62,10 @@ function App() {
   return (
     <div className="app-container" style={{ 
       border: '1px solid black', 
-      padding: '20px', 
+      padding: '20px 40px', // Increased horizontal padding
       borderRadius: '10px',
-      maxWidth: '90%', // Set container width to 90% of the screen width
-      margin: '20px auto', // Add margin to all sides, center horizontally
+      maxWidth: '90%', 
+      margin: '20px auto', 
       textAlign: 'center',
       backgroundColor: 'white',
       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
