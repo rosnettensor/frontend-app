@@ -14,11 +14,11 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh; /* Ensure the body fills the viewport */
-  background-color: #f0f0f0; /* Light gray background */
+  background: url('/bg.jpeg') no-repeat center center fixed; /* Add background image */
+  background-size: cover; /* Ensure the image covers the whole screen */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center; /* Center the text horizontally */
 }
 
 code {
@@ -35,27 +35,25 @@ code {
 
 .app-container {
   background-color: white;
-  padding: 30px;
+  padding: 20px 40px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
-  max-width: 400px; /* Limit the width of the app */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
   width: 100%;
-  border: 2px solid black; /* Fine black outline for a monochrome look */
   text-align: center;
+  border: 1px solid black;
+  margin: 20px auto;
 }
 
 /* Add margin to space out the title and subtitle */
 h1 {
-  margin-bottom: 20px; /* Space between the title and the next element */
-  font-weight: 600;
+  margin-bottom: 20px;
 }
 
 h2 {
-  margin-bottom: 15px; /* Space between the subtitle and the QR code scanner */
-  font-weight: 500;
+  margin-bottom: 15px;
 }
 
-/* Buttons - Monochrome style */
 button {
   background-color: black;
   color: white;
@@ -70,14 +68,12 @@ button:hover {
   background-color: #333; /* Slightly lighter black on hover */
 }
 
-/* Add some stylish transitions for interactive elements */
 button, img {
   transition: all 0.3s ease;
 }
 
-/* Stylish hover effect for buttons and images */
 button:hover, img:hover {
-  transform: scale(1.05); /* Slight zoom in on hover */
+  transform: scale(1.05);
 }
 
 /* Ensure the app is responsive on mobile */
