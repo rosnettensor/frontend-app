@@ -64,10 +64,12 @@ function App() {
       border: '1px solid black', 
       padding: '20px', 
       borderRadius: '10px',
-      maxWidth: '500px',
+      maxWidth: '90%', // Set container width to 90% of the screen width
+      margin: '20px auto', // Add margin to all sides, center horizontally
       textAlign: 'center',
-      margin: 'auto' // Horizontally center the app
-      }}>
+      backgroundColor: 'white',
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+    }}>
       {/* Add the logo at the top */}
       <img src="/logo.png" alt="App Logo" style={{ width: '150px', marginBottom: '20px' }} />
 
