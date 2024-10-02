@@ -60,7 +60,14 @@ function App() {
   };
 
   return (
-    <div className="app-container">
+    <div className="app-container" style={{ 
+      border: '1px solid black', 
+      padding: '20px', 
+      borderRadius: '10px',
+      maxWidth: '500px',
+      textAlign: 'center',
+      margin: 'auto' // Horizontally center the app
+      }}>
       {/* Add the logo at the top */}
       <img src="/logo.png" alt="App Logo" style={{ width: '150px', marginBottom: '20px' }} />
 
@@ -69,7 +76,9 @@ function App() {
       {!isImageCaptureActive ? (
         <div>
           <h2>Scan QR Code</h2>
-          <QRCodeScanner onScanSuccess={handleScanSuccess} />
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <QRCodeScanner onScanSuccess={handleScanSuccess} />
+          </div>
         </div>
       ) : (
         <div>
@@ -95,7 +104,7 @@ function App() {
                     display: 'block',
                     marginTop: '5px',
                     color: 'white',
-                    backgroundColor: 'red',
+                    backgroundColor: 'black',
                     border: 'none',
                     padding: '5px',
                     borderRadius: '5px',
@@ -118,7 +127,7 @@ function App() {
               display: 'block',
               marginTop: '20px',
               padding: '10px 20px',
-              backgroundColor: '#4CAF50',
+              backgroundColor: 'black',
               color: 'white',
               border: 'none',
               borderRadius: '5px',
