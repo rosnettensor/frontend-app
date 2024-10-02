@@ -8,16 +8,13 @@ function App() {
   const [storedImages, setStoredImages] = useState([]);
   const [isImageCaptureActive, setIsImageCaptureActive] = useState(false);
 
-  // Use environment variable for backend URL
   const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://enea-nursery-ad2458bf1633.herokuapp.com';
 
   const handleScanSuccess = (data) => {
-    console.log('Data received:', data);
     if (!data || !data.GroupID || !data.Plant) {
       console.error('No data received or invalid structure');
       return;
     }
-
     const qrData = {
       groupId: data.GroupID,
       plant: data.Plant,
@@ -25,14 +22,12 @@ function App() {
       storage: data.Storage || 'No storage',
       pad: data.Pad || 'No pad',
     };
-
     setQrCodeData(qrData);
     setPlantData(data);
     setStoredImages(data.ImageLinks ? data.ImageLinks.split(',') : []);
     setIsImageCaptureActive(true);
   };
 
-  // Handle reset to initial state
   const handleConfirmAndReset = () => {
     setQrCodeData(null);
     setPlantData(null);
@@ -40,7 +35,6 @@ function App() {
     setIsImageCaptureActive(false);
   };
 
-  // Delete image function
   const handleDeleteImage = (imageUrl) => {
     fetch(`${backendUrl}/delete-image`, {
       method: 'DELETE',
@@ -66,7 +60,10 @@ function App() {
   };
 
   return (
-    <div style={{ padding: '10px', maxWidth: '400px', margin: 'auto' }}>
+    <div className="app-container">
+      {/* Add the logo at the top */}
+      <img src="/logo.png" alt="App Logo" style={{ width: '150px', marginBottom: '20px' }} />
+
       <h1>Plant Nursery</h1>
 
       {!isImageCaptureActive ? (
