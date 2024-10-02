@@ -1,0 +1,10 @@
+version: "2"  # Ensure this is using the correct version format
+
+tunnels:
+  frontend:
+    addr: 3000
+    proto: http
+  backend:
+    addr: 5001
+    proto: http
+
