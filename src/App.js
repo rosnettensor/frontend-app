@@ -11,6 +11,7 @@ function App() {
   const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://enea-nursery-ad2458bf1633.herokuapp.com';
 
   const handleScanSuccess = (data) => {
+    console.log("Scan Success:", data); // Log scanned data
     if (!data || !data.GroupID || !data.Plant) {
       console.error('No data received or invalid structure');
       return;
