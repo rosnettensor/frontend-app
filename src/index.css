@@ -14,7 +14,7 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh; /* Ensure the body fills the viewport */
-  background: url('/bg.jpeg') no-repeat center center fixed; /* Correct background image reference */
+  background: #ffffff url('/bg.jpeg') no-repeat center center fixed; /* Correct background image reference with fallback */
   background-size: cover; /* Ensure the image covers the whole screen */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -85,5 +85,13 @@ button:hover, img:hover {
 
   button {
     width: 100%; /* Make the button full-width on smaller screens */
+  }
+
+  h1, h2 {
+    font-size: 1.5em; /* Adjust font size for mobile */
+  }
+
+  body {
+    background-size: contain; /* Adjust background image behavior on smaller screens */
   }
 }
