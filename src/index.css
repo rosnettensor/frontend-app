@@ -14,7 +14,7 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: url('/bg.jpeg') no-repeat center center fixed; /* Reference public folder */
+  background-color: #f0f0f0;
   background-size: cover; /* Ensure the image covers the whole screen */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
