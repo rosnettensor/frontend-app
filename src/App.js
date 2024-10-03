@@ -5,17 +5,12 @@ import CameraTool from './CameraTool';
 function App() {
   const [qrCodeData, setQrCodeData] = useState(null);
   const [plantData, setPlantData] = useState(null);
-  const [storedImages, setStoredImages] = useState([]);
   const [isImageCaptureActive, setIsImageCaptureActive] = useState(false);
+  const [storedImages, setStoredImages] = useState([]);
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://enea-nursery-ad2458bf1633.herokuapp.com';
 
   const handleScanSuccess = (data) => {
-    console.log("Scan Success:", data); // Log scanned data
-    if (!data || !data.GroupID || !data.Plant) {
-      console.error('No data received or invalid structure');
-      return;
-    }
     const qrData = {
       groupId: data.GroupID,
       plant: data.Plant,
@@ -23,6 +18,7 @@ function App() {
       storage: data.Storage || 'No storage',
       pad: data.Pad || 'No pad',
     };
+
     setQrCodeData(qrData);
     setPlantData(data);
     setStoredImages(data.ImageLinks ? data.ImageLinks.split(',') : []);
