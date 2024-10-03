@@ -35,52 +35,13 @@ function App() {
     setIsImageCaptureActive(false);
   };
 
-  const handleDeleteImage = (imageUrl) => {
-    fetch(`${backendUrl}/delete-image`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        groupId: qrCodeData.groupId,
-        plantId: qrCodeData.plant,
-        imageUrl: imageUrl,
-      }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to delete image');
-        }
-        return response.json();
-      })
-      .then((result) => {
-        if (result.success) {
-          setStoredImages((prevImages) => prevImages.filter((url) => url !== imageUrl));
-        }
-      })
-      .catch((error) => console.error('Error deleting image:', error));
-  };
-
   return (
-    <div className="app-container" style={{ 
-      border: '1px solid black', 
-      padding: '20px 40px', // Increased horizontal padding
-      borderRadius: '10px',
-      maxWidth: '90%', 
-      margin: '20px auto', 
-      textAlign: 'center',
-      backgroundColor: 'white',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
-    }}>
-      {/* Add the logo at the top */}
-      <img src="/logo.png" alt="App Logo" style={{ width: '150px', marginBottom: '20px' }} />
-
+    <div className="app-container" style={{ padding: '20px', border: '1px solid black', borderRadius: '10px', textAlign: 'center' }}>
       <h1>Plant Nursery</h1>
-
       {!isImageCaptureActive ? (
         <div>
           <h2>Scan QR Code</h2>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <QRCodeScanner onScanSuccess={handleScanSuccess} />
-          </div>
+          <QRCodeScanner onScanSuccess={handleScanSuccess} />
         </div>
       ) : (
         <div>
@@ -94,49 +55,8 @@ function App() {
               <p><strong>Pad:</strong> {qrCodeData.pad}</p>
             </div>
           )}
-
-          <h3>Stored Images:</h3>
-          {storedImages.length > 0 ? (
-            storedImages.map((url, index) => (
-              <div key={index} style={{ display: 'inline-block', margin: '10px', textAlign: 'center' }}>
-                <img src={`${backendUrl}${url}`} alt={`Stored ${index}`} width="100" />
-                <button
-                  onClick={() => handleDeleteImage(url)}
-                  style={{
-                    display: 'block',
-                    marginTop: '5px',
-                    color: 'white',
-                    backgroundColor: 'black',
-                    border: 'none',
-                    padding: '5px',
-                    borderRadius: '5px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Delete
-                </button>
-              </div>
-            ))
-          ) : (
-            <p>No stored images</p>
-          )}
-
           <CameraTool groupId={qrCodeData.groupId} plantId={qrCodeData.plant} />
-
-          <button
-            onClick={handleConfirmAndReset}
-            style={{
-              display: 'block',
-              marginTop: '20px',
-              padding: '10px 20px',
-              backgroundColor: 'black',
-              color: 'white',
-              border: 'none',
-              borderRadius: '5px',
-              fontSize: '16px',
-              cursor: 'pointer',
-            }}
-          >
+          <button onClick={handleConfirmAndReset} style={{ marginTop: '20px', padding: '10px', backgroundColor: 'black', color: 'white', borderRadius: '5px' }}>
             Confirm and Scan Next Plant
           </button>
         </div>

@@ -1,15 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 function CameraTool({ groupId, plantId }) {
-  const [imageUrls, setImageUrls] = useState([]); // Store multiple images
-  const videoRef = useRef(null); // Ref to access the video element
-  const canvasRef = useRef(null); // Ref to access the canvas element
+  const [imageUrls, setImageUrls] = useState([]);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
 
   useEffect(() => {
     async function startCamera() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { exact: 'environment' } },  // Force rear camera
+          video: { facingMode: { exact: 'environment' } },
         });
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
@@ -20,7 +20,7 @@ function CameraTool({ groupId, plantId }) {
     }
 
     startCamera();
-    
+
     return () => {
       if (videoRef.current && videoRef.current.srcObject) {
         videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
@@ -42,10 +42,8 @@ function CameraTool({ groupId, plantId }) {
         formData.append('groupId', groupId);
         formData.append('plantId', plantId);
 
-        // Use environment variable for backend URL
         const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://enea-nursery-ad2458bf1633.herokuapp.com';
 
-        // Upload the captured image
         fetch(`${backendUrl}/upload`, {
           method: 'POST',
           body: formData,
@@ -62,12 +60,10 @@ function CameraTool({ groupId, plantId }) {
   return (
     <div>
       <video ref={videoRef} autoPlay playsInline style={{ width: '100%', maxHeight: '400px' }} />
-      <button onClick={handleCapture} style={{ display: 'block', marginTop: '10px', padding: '10px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '5px' }}>
+      <button onClick={handleCapture} style={{ display: 'block', marginTop: '10px', padding: '10px', backgroundColor: '#4CAF50', color: 'white', borderRadius: '5px' }}>
         Capture Image
       </button>
-      
       <canvas ref={canvasRef} style={{ display: 'none' }} />
-
       <div>
         <h3>Captured Images:</h3>
         {imageUrls.length > 0 ? (
