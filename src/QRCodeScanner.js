@@ -5,27 +5,17 @@ function QRCodeScanner({ onScanSuccess }) {
   const html5QrCodeRef = useRef(null);
   const [message, setMessage] = useState('Initializing scanner...');
 
-  // Function to parse the QR code and extract GroupID and PlantID
-  const parseQRCode = (qrCodeData) => {
-    const qrArray = qrCodeData.split('*');
-    const groupID = qrArray.find(code => code.startsWith('A')).replace(/[A-Z]/g, '');
-    const plantID = qrArray.find(code => code.startsWith('V')).replace(/[A-Z]/g, '');
-    return { groupID, plantID };
-  };
-
   useEffect(() => {
     const html5QrCode = new Html5Qrcode("reader");
     html5QrCodeRef.current = html5QrCode;
 
     const handleScanSuccess = (decodedText) => {
       console.log('QR code detected:', decodedText);
-      const { groupID, plantID } = parseQRCode(decodedText);
-      console.log('Parsed Group ID:', groupID, 'Parsed Plant ID:', plantID);
 
       fetch('https://enea-nursery.herokuapp.com/scan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ groupID, plantID })
+        body: JSON.stringify({ qrCodeData: decodedText }) // Send the full QR code data
       })
       .then(response => {
         if (!response.ok) {
