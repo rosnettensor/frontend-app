@@ -27,8 +27,9 @@ function QRCodeScanner({ onScanSuccess }) {
       fetch('https://enea-nursery.herokuapp.com/scan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ groupID, plantID }) // Send parsed data
+        body: JSON.stringify({ groupID, plantID }) // Parsed GroupID and PlantID
       })
+      
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch plant data');
