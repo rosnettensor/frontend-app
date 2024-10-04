@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';  // Ensure this is installed in your project
 
 function QRCodeScanner({ onScanSuccess }) {
   const html5QrCodeRef = useRef(null);
@@ -8,8 +8,8 @@ function QRCodeScanner({ onScanSuccess }) {
   // Function to parse the QR code and extract GroupID and PlantID
   const parseQRCode = (qrCodeData) => {
     const qrArray = qrCodeData.split('*');
-    const groupID = qrArray.find(code => code.startsWith('A')).replace(/[A-Z]/g, ''); // Extract GroupID, remove letter prefix
-    const plantID = qrArray.find(code => code.startsWith('V')).replace(/[A-Z]/g, ''); // Extract PlantID, remove letter prefix
+    const groupID = qrArray.find(code => code.startsWith('A')).replace(/[A-Z]/g, '');
+    const plantID = qrArray.find(code => code.startsWith('V')).replace(/[A-Z]/g, '');
     return { groupID, plantID };
   };
 
@@ -19,39 +19,28 @@ function QRCodeScanner({ onScanSuccess }) {
 
     const handleScanSuccess = (decodedText) => {
       console.log('QR code detected:', decodedText);
-
-      const { groupID, plantID } = parseQRCode(decodedText); // Parse QR code data
+      const { groupID, plantID } = parseQRCode(decodedText);
       console.log('Parsed Group ID:', groupID, 'Parsed Plant ID:', plantID);
 
-      // Stop scanner after successful scan
-      html5QrCodeRef.current.stop().then(() => {
-        console.log("QR code scanner stopped after successful scan.");
-      }).catch(err => console.error("Error stopping QR code scanner:", err));
-
-      if (groupID && plantID) {
-        fetch('https://enea-nursery.herokuapp.com/scan', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ groupID, plantID }) // Send parsed GroupID and PlantID
-        })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Failed to fetch plant data');
-          }
-          return response.json();
-        })
-        .then(data => {
-          onScanSuccess(data); // Pass the plant data to the parent component
-          setMessage('Plant data found and fetched!');
-        })
-        .catch(error => {
-          console.error('Error fetching plant data:', error);
-          setMessage('Error fetching plant data');
-        });
-      } else {
-        setMessage('Invalid QR code format.');
-        console.error('QR code parsing failed.');
-      }
+      fetch('https://enea-nursery.herokuapp.com/scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ groupID, plantID })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch plant data');
+        }
+        return response.json();
+      })
+      .then(data => {
+        onScanSuccess(data);
+        setMessage('Plant data found and fetched!');
+      })
+      .catch(error => {
+        console.error('Error fetching plant data:', error);
+        setMessage('Error fetching plant data');
+      });
     };
 
     const handleScanError = (errorMessage) => {
@@ -60,7 +49,7 @@ function QRCodeScanner({ onScanSuccess }) {
 
     html5QrCode.start(
       { facingMode: "environment" }, 
-      { fps: 20, qrbox: 300 }, // Increased fps and qrbox size for better detection
+      { fps: 10, qrbox: 250 }, 
       handleScanSuccess, 
       handleScanError
     ).then(() => {
