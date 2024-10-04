@@ -5,21 +5,21 @@ function QRCodeScanner({ onScanSuccess }) {
   const html5QrCodeRef = useRef(null);
   const [message, setMessage] = useState('Initializing scanner...');
 
-  // Function to parse the QR code and extract GroupID and PlantID
+  // Function to parse the QR code and extract GroupID and Plant
   const parseQRCode = (qrCodeData) => {
     console.log('Raw QR Data:', qrCodeData);  // Logging QR Data for debugging
     const qrArray = qrCodeData.split('*');
-    const groupID = qrArray.find(code => code.startsWith('A'))?.replace(/[A-Z]/g, '');
-    const plantID = qrArray.find(code => code.startsWith('V'))?.replace(/[A-Z]/g, '');
+    const groupID = qrArray.find(code => code.startsWith('A'))?.replace(/[A-Z]/g, ''); // GroupID
+    const plant = qrArray.find(code => code.startsWith('V'))?.replace(/[A-Z]/g, ''); // Plant (not PlantID)
     
     // Error check
-    if (!groupID || !plantID) {
-      console.error('Parsing failed:', groupID, plantID);
+    if (!groupID || !plant) {
+      console.error('Parsing failed:', groupID, plant);
       setMessage('Error parsing QR code');
       return { error: 'Parsing error' };
     }
     
-    return { groupID, plantID };
+    return { groupID, plant };
   };
 
   useEffect(() => {
@@ -30,16 +30,16 @@ function QRCodeScanner({ onScanSuccess }) {
       console.log('QR code detected:', decodedText);
 
       // Parse the scanned QR code
-      const { groupID, plantID } = parseQRCode(decodedText);
+      const { groupID, plant } = parseQRCode(decodedText); // Correctly extract GroupID and Plant (not PlantID)
 
-      if (groupID && plantID) {
-        console.log('Parsed Group ID:', groupID, 'Parsed Plant ID:', plantID);
+      if (groupID && plant) {
+        console.log('Parsed Group ID:', groupID, 'Parsed Plant:', plant);
 
         // Send the raw QR code data to the backend for validation and processing
         fetch('https://enea-nursery.herokuapp.com/scan', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ qrCodeData: decodedText })  // Send the full QR code data
+          body: JSON.stringify({ groupID, plant })  // Send groupID and plant (not PlantID)
         })
         .then(response => {
           if (!response.ok) {
