@@ -8,7 +8,6 @@ function QRCodeScanner({ onScanSuccess }) {
   // Function to parse the QR code and extract GroupID and PlantID
   const parseQRCode = (qrCodeData) => {
     const qrArray = qrCodeData.split('*');
-    // Find and clean the GroupID and PlantID
     const groupID = qrArray.find(code => code.startsWith('A')).replace(/[A-Z]/g, ''); // Extract GroupID, remove letter prefix
     const plantID = qrArray.find(code => code.startsWith('V')).replace(/[A-Z]/g, ''); // Extract PlantID, remove letter prefix
     return { groupID, plantID };
@@ -24,7 +23,11 @@ function QRCodeScanner({ onScanSuccess }) {
       const { groupID, plantID } = parseQRCode(decodedText); // Parse QR code data
       console.log('Parsed Group ID:', groupID, 'Parsed Plant ID:', plantID);
 
-      // Make a request to the backend only if both GroupID and PlantID are parsed
+      // Stop scanner after successful scan
+      html5QrCodeRef.current.stop().then(() => {
+        console.log("QR code scanner stopped after successful scan.");
+      }).catch(err => console.error("Error stopping QR code scanner:", err));
+
       if (groupID && plantID) {
         fetch('https://enea-nursery.herokuapp.com/scan', {
           method: 'POST',
