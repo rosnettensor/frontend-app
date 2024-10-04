@@ -7,10 +7,14 @@ function QRCodeScanner({ onScanSuccess }) {
 
   // Function to parse the QR code and extract GroupID and PlantID
   const parseQRCode = (qrCodeData) => {
-    // Remove irrelevant parts like *TA*, and only keep the useful data
+    console.log('Raw QR Data:', qrCodeData);  // Add this line
     const qrArray = qrCodeData.split('*');
-    const groupID = qrArray.find(code => code.startsWith('A')).replace(/[A-Z]/g, '');  // Strip letters from GroupID
-    const plantID = qrArray.find(code => code.startsWith('V')).replace(/[A-Z]/g, '');  // Strip letters from PlantID
+    const groupID = qrArray.find(code => code.startsWith('A'))?.replace(/[A-Z]/g, '');
+    const plantID = qrArray.find(code => code.startsWith('V'))?.replace(/[A-Z]/g, '');
+    if (!groupID || !plantID) {
+      console.error('Parsing failed:', groupID, plantID);
+      return { error: 'Parsing error' };
+    }
     return { groupID, plantID };
   };
 
