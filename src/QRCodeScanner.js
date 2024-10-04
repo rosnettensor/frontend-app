@@ -11,7 +11,7 @@ function QRCodeScanner({ onScanSuccess }) {
     const qrArray = qrCodeData.split('*');
     const groupID = qrArray.find(code => code.startsWith('A'))?.replace(/[A-Z]/g, '');
     const plant = qrArray.find(code => code.startsWith('V'))?.replace(/[A-Z]/g, '');
-    
+
     if (!groupID || !plant) {
       console.error('Parsing failed:', groupID, plant);
       setMessage('Error parsing QR code');
