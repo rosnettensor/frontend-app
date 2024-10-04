@@ -24,26 +24,31 @@ function QRCodeScanner({ onScanSuccess }) {
       const { groupID, plantID } = parseQRCode(decodedText); // Parse QR code data
       console.log('Parsed Group ID:', groupID, 'Parsed Plant ID:', plantID);
 
-      fetch('https://enea-nursery.herokuapp.com/scan', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ groupID, plantID }) // Parsed GroupID and PlantID
-      })
-      
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch plant data');
-        }
-        return response.json();
-      })
-      .then(data => {
-        onScanSuccess(data); // Pass the plant data to the parent component
-        setMessage('Plant data found and fetched!');
-      })
-      .catch(error => {
-        console.error('Error fetching plant data:', error);
-        setMessage('Error fetching plant data');
-      });
+      // Make a request to the backend only if both GroupID and PlantID are parsed
+      if (groupID && plantID) {
+        fetch('https://enea-nursery.herokuapp.com/scan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ groupID, plantID }) // Send parsed GroupID and PlantID
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch plant data');
+          }
+          return response.json();
+        })
+        .then(data => {
+          onScanSuccess(data); // Pass the plant data to the parent component
+          setMessage('Plant data found and fetched!');
+        })
+        .catch(error => {
+          console.error('Error fetching plant data:', error);
+          setMessage('Error fetching plant data');
+        });
+      } else {
+        setMessage('Invalid QR code format.');
+        console.error('QR code parsing failed.');
+      }
     };
 
     const handleScanError = (errorMessage) => {
@@ -52,7 +57,7 @@ function QRCodeScanner({ onScanSuccess }) {
 
     html5QrCode.start(
       { facingMode: "environment" }, 
-      { fps: 10, qrbox: 250 }, 
+      { fps: 20, qrbox: 300 }, // Increased fps and qrbox size for better detection
       handleScanSuccess, 
       handleScanError
     ).then(() => {
