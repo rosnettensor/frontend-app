@@ -1,58 +1,71 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 
-function QRCodeScanner({ onScanSuccess, onScanError }) {
-  const scannerRef = useRef(null);
-  const [scanner, setScanner] = useState(null);
+function QRCodeScanner({ onScanSuccess }) {
+  const html5QrCodeRef = useRef(null);
+  const [message, setMessage] = useState('Initializing scanner...');
 
   useEffect(() => {
-    const scanner = new Html5QrcodeScanner(
-      "qr-code-scanner",
-      { fps: 10, qrbox: { width: 250, height: 250 } },
-      false
-    );
+    const html5QrCode = new Html5Qrcode("reader");
+    html5QrCodeRef.current = html5QrCode;
 
-    scanner.render(
-      (decodedText, decodedResult) => {
-        console.log("QR Code decoded:", decodedText);
+    const handleScanSuccess = (decodedText) => {
+      console.log('QR code detected:', decodedText);
 
-        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://enea-nursery-ad2458bf1633.herokuapp.com';
+      fetch('https://enea-nursery.herokuapp.com/scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ qrCodeData: decodedText })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch plant data');
+        }
+        return response.json();
+      })
+      .then(data => {
+        onScanSuccess(data); // Pass the plant data to the parent component
+        setMessage('Plant data found and fetched!');
+      })
+      .catch(error => {
+        console.error('Error fetching plant data:', error);
+        setMessage('Error fetching plant data');
+      });
+    };
 
-        fetch(`${backendUrl}/scan`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ qrCodeData: decodedText }),
-        })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Failed to fetch plant data');
-            }
-            return response.json();
-          })
-          .then(data => {
-            if (onScanSuccess) {
-              onScanSuccess(data); // Pass the plant data to the parent component
-            }
-          })
-          .catch(error => {
-            console.error('Error fetching plant data:', error);
-            if (onScanError) onScanError(error);
-          });
-      },
-      (error) => {
-        console.log("QR Code scan error:", error);
-        if (onScanError) onScanError(error);
-      }
-    );
+    const handleScanError = (errorMessage) => {
+      console.error('QR Code scan error:', errorMessage);
+    };
 
-    setScanner(scanner);
+    html5QrCode.start(
+      { facingMode: "environment" }, 
+      { fps: 10, qrbox: 250 }, 
+      handleScanSuccess, 
+      handleScanError
+    ).then(() => {
+      setMessage('QR Code scanner initialized.');
+    }).catch(err => {
+      setMessage('Failed to start QR code scanning.');
+      console.error('Failed to start QR code scanning:', err);
+    });
 
     return () => {
-      scanner.clear().catch((error) => console.error("Failed to clear QRCodeScanner", error));
+      if (html5QrCodeRef.current) {
+        html5QrCodeRef.current.stop().then(() => {
+          html5QrCodeRef.current.clear();
+        }).catch(err => {
+          console.error('Failed to stop QR code scanning:', err);
+        });
+      }
     };
-  }, [onScanSuccess, onScanError]);
+  }, [onScanSuccess]);
 
-  return <div id="qr-code-scanner" style={{ width: '300px' }} />;
+  return (
+    <div>
+      <div id="reader" style={{ width: '300px', marginBottom: '10px' }}></div>
+      <p>{message}</p>
+    </div>
+  );
 }
 
 export default QRCodeScanner;
