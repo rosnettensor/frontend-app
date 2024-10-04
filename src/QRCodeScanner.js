@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';  // Ensure this is installed
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 
 function QRCodeScanner({ onScanSuccess }) {
   const html5QrCodeRef = useRef(null);
@@ -7,18 +7,17 @@ function QRCodeScanner({ onScanSuccess }) {
 
   // Function to parse the QR code and extract GroupID and Plant
   const parseQRCode = (qrCodeData) => {
-    console.log('Raw QR Data:', qrCodeData);  // Logging QR Data for debugging
+    console.log('Raw QR Data:', qrCodeData);
     const qrArray = qrCodeData.split('*');
-    const groupID = qrArray.find(code => code.startsWith('A'))?.replace(/[A-Z]/g, ''); // GroupID
-    const plant = qrArray.find(code => code.startsWith('V'))?.replace(/[A-Z]/g, ''); // Plant (not PlantID)
+    const groupID = qrArray.find(code => code.startsWith('A'))?.replace(/[A-Z]/g, '');
+    const plant = qrArray.find(code => code.startsWith('V'))?.replace(/[A-Z]/g, '');
     
-    // Error check
     if (!groupID || !plant) {
       console.error('Parsing failed:', groupID, plant);
       setMessage('Error parsing QR code');
       return { error: 'Parsing error' };
     }
-    
+
     return { groupID, plant };
   };
 
@@ -30,7 +29,7 @@ function QRCodeScanner({ onScanSuccess }) {
       console.log('QR code detected:', decodedText);
 
       // Parse the scanned QR code
-      const { groupID, plant } = parseQRCode(decodedText); // Correctly extract GroupID and Plant (not PlantID)
+      const { groupID, plant } = parseQRCode(decodedText);
 
       if (groupID && plant) {
         console.log('Parsed Group ID:', groupID, 'Parsed Plant:', plant);
@@ -39,7 +38,7 @@ function QRCodeScanner({ onScanSuccess }) {
         fetch('https://enea-nursery.herokuapp.com/scan', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ groupID, plant })  // Send groupID and plant (not PlantID)
+          body: JSON.stringify({ qrCodeData: decodedText })  // Send the full QR code data
         })
         .then(response => {
           if (!response.ok) {
@@ -64,9 +63,13 @@ function QRCodeScanner({ onScanSuccess }) {
     };
 
     html5QrCode.start(
-      { facingMode: "environment" }, 
-      { fps: 10, qrbox: 250 }, 
-      handleScanSuccess, 
+      { facingMode: "environment" },
+      {
+        fps: 10,
+        qrbox: 250,
+        formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE]  // Ensure correct QR code format
+      },
+      handleScanSuccess,
       handleScanError
     ).then(() => {
       setMessage('QR Code scanner initialized.');
